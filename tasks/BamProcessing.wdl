@@ -523,6 +523,7 @@ task GatherIlluminaAdaptersMetrics {
     memory: "4 GiB"
     disks: "local-disk 20 HDD"
     preemptible: preemptible_tries
+    continueOnReturnCode: 1
   }
   output {
     File illuminaadapters_metrics = "~{output_bam_basename}.illuminaadapters_metrics"
