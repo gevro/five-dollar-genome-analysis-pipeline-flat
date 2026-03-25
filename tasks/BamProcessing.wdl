@@ -511,8 +511,8 @@ task GatherIlluminaAdaptersMetrics {
     set -o pipefail
 
     for file in ~{sep=' ' input_illuminaadapters_metrics} ; do
-      grep '^\#' $file | grep -v 'clipped_bases' >> ~{output_bam_basename}.illuminaadapters_metrics
-      grep -v '^\#' $file | grep -v 'clipped_bases' | grep -v '^$' > `basename $file`.tmp
+      grep '^\#' $file | grep -v 'clipped_bases' >> ~{output_bam_basename}.illuminaadapters_metrics || true
+      grep -v '^\#' $file | grep -v 'clipped_bases' | grep -v '^$' > `basename $file`.tmp || true
     done
     echo -e 'clipped_bases\tread_count' >> ~{output_bam_basename}.illuminaadapters_metrics
     awk '{clipping[$1]+=$2}END{for(i in clipping){print i "\t" clipping[i]}}' `ls *.tmp` | sort -k 1,1n >> ~{output_bam_basename}.illuminaadapters_metrics
@@ -523,7 +523,6 @@ task GatherIlluminaAdaptersMetrics {
     memory: "4 GiB"
     disks: "local-disk 20 HDD"
     preemptible: preemptible_tries
-    continueOnReturnCode: 1
   }
   output {
     File illuminaadapters_metrics = "~{output_bam_basename}.illuminaadapters_metrics"
